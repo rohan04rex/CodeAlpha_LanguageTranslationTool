@@ -139,17 +139,6 @@ Input is limited to 5,000 characters.
 
 ---
 
-## 🎓 CodeAlpha AI Internship Checklist
-
-- [x] Repository named `CodeAlpha_LanguageTranslationTool`
-- [x] UI with source & target language selectors
-- [x] Translation API integration (`deep-translator` / Google Translate)
-- [x] Clear display of translated text with character/word counts
-- [x] One-click copy functionality with feedback
-- [x] Verified by an offline automated test suite (15 tests)
-
----
-
 ## 👤 Author
 
 Developed for the **CodeAlpha Artificial Intelligence Internship**.
