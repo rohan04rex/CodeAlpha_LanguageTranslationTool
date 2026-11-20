@@ -1,6 +1,6 @@
-# CodeAlpha — Language Translation Tool (Task 1)
+# CodeAlpha — Language Translation Tool 
 
-A lightweight, modern web application for multilingual text translation. Built as part of the **CodeAlpha Artificial Intelligence Internship** (Task 1).
+A lightweight, modern web application for multilingual text translation. Built as part of the **CodeAlpha Artificial Intelligence Internship** .
 
 ![Project Banner](https://img.shields.io/badge/CodeAlpha-AI_Internship-6366f1?style=for-the-badge)
 ![Python Version](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python)
