@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CodeAlpha AI Internship Task 1: A lightweight Language Translation Tool supporting 51 languages with automatic detection and instant clipboard copy.">
+    <meta name="keywords" content="Language Translator, CodeAlpha, AI Translation, NLP, Deep Translator, Multilingual">
+    <meta name="author" content="CodeAlpha Intern">
+    <title>CodeAlpha — AI Language Translation Tool</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans, Racing Sans One & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Racing+Sans+One&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dark-theme">
+    <!-- Glowing Aurora Mesh (Pink/Magenta/Purple Gradient Atmosphere) -->
+    <div class="aurora-glow" aria-hidden="true"></div>
+
+    <div class="app-layout">
+        <!-- Top Navigation Bar -->
+        <header class="top-nav">
+            <div class="nav-left">
+                <div class="icon-orb" title="CodeAlpha AI">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </div>
+                <div class="nav-brand-text">
+                    <span class="nav-brand-name">CodeAlpha</span>
+                    <span class="nav-brand-tag">Task 1</span>
+                </div>
+            </div>
+
+            <div class="nav-right">
+                <span class="premium-badge">
+                    <span class="pulse-dot"></span>
+                    AI Online
+                </span>
+                <button id="themeToggleBtn" class="theme-pill-btn" title="Toggle Theme" aria-label="Toggle Theme">
+                    <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                    </svg>
+                    <span>Mode</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Hero Headline Section -->
+        <section class="hero-section">
+            <h1 class="hero-title">Translate, explore,<br><span class="gradient-text">be understood</span></h1>
+            <p class="hero-subtitle">High-performance AI translation across 51 global languages</p>
+        </section>
+
+        <!-- Feature / Quick Mode Cards -->
+        <section class="feature-cards-row" aria-label="Quick Features">
+            <div class="feature-card sample-trigger" role="button" tabindex="0" data-sample="Welcome to CodeAlpha Artificial Intelligence Internship program!">
+                <div class="feature-card-content">
+                    <span class="feature-card-title">AI Internship</span>
+                    <span class="feature-card-sub">Sample prompt</span>
+                </div>
+                <div class="feature-card-arrow">↗</div>
+            </div>
+
+            <div class="feature-card sample-trigger" role="button" tabindex="0" data-sample="Deep learning models revolutionize automated language understanding.">
+                <div class="feature-card-content">
+                    <span class="feature-card-title">Deep Learning</span>
+                    <span class="feature-card-sub">NLP workflow</span>
+                </div>
+                <div class="feature-card-arrow">↗</div>
+            </div>
+
+            <div class="feature-card sample-trigger" role="button" tabindex="0" data-sample="Bonjour! Bienvenue dans notre application de traduction rapide.">
+                <div class="feature-card-content">
+                    <span class="feature-card-title">Auto Detect</span>
+                    <span class="feature-card-sub">French input</span>
+                </div>
+                <div class="feature-card-arrow">↗</div>
+            </div>
+        </section>
+
+        <!-- Main Translation Workspace -->
+        <main class="translation-workspace">
+            <!-- Source Card -->
+            <section class="sleek-card source-card" id="sourceCard">
+                <div class="card-bar">
+                    <div class="lang-pill-wrapper">
+                        <select id="sourceLangSelect" class="lang-dropdown">
+                            {% for code, name in languages.items() %}
+                                <option value="{{ code }}" {% if code == 'auto' %}selected{% endif %}>
+                                    {{ name }}{% if code == 'auto' %} (Auto Detect){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <span id="detectedBadge" class="neon-badge" style="display: none;">
+                            Detected: <strong id="detectedLangName">English</strong>
+                        </span>
+                    </div>
+
+                    <button id="clearInputBtn" class="action-icon-btn" title="Clear text" aria-label="Clear input">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="card-text-area">
+                    <textarea 
+                        id="sourceText" 
+                        class="sleek-textarea" 
+                        placeholder="Enter text to translate... (Ctrl + Enter to translate)"
+                        maxlength="5000"
+                        spellcheck="true"
+                    ></textarea>
+                </div>
+
+                <div class="card-bottom-bar">
+                    <div class="text-stats">
+                        <span id="charCount">0 / 5000</span>
+                        <span class="stats-sep">•</span>
+                        <span id="wordCount">0 words</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Floating Swap Button -->
+            <div class="swap-action-container">
+                <button id="swapLanguagesBtn" class="swap-glow-btn" title="Swap Languages" aria-label="Swap Languages">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="17 1 21 5 17 9"></polyline>
+                        <path d="M3 5h18"></path>
+                        <polyline points="7 23 3 19 7 15"></polyline>
+                        <path d="M21 19H3"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Target Output Card -->
+            <section class="sleek-card target-card" id="targetCard">
+                <div class="card-bar">
+                    <div class="lang-pill-wrapper">
+                        <select id="targetLangSelect" class="lang-dropdown">
+                            {% for code, name in languages.items() %}
+                                {% if code != 'auto' %}
+                                    <option value="{{ code }}" {% if code == 'es' %}selected{% endif %}>
+                                        {{ name }}
+                                    </option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="card-bar-actions">
+                        <button id="copyResultBtn" class="copy-pill-btn" title="Copy Translation" aria-label="Copy Translation">
+                            <svg id="copyIconDefault" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <svg id="copyIconSuccess" class="hidden" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span id="copyBtnText">Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-text-area target-text-area">
+                    <div id="outputPlaceholder" class="empty-state">
+                        <div class="empty-icon-circle">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                        </div>
+                        <p>Translated text will appear here</p>
+                    </div>
+                    <div id="targetText" class="sleek-result" style="display: none;" tabindex="0"></div>
+                </div>
+
+                <div class="card-bottom-bar">
+                    <span id="providerBadge" class="provider-pill" style="display: none;">Google Engine</span>
+                    <span id="resultStats" class="text-stats"></span>
+                </div>
+            </section>
+        </main>
+
+        <!-- Big Neon Primary Action Button -->
+        <div class="cta-wrapper">
+            <button id="translateBtn" class="neon-primary-btn">
+                <span class="spinner" id="btnSpinner" style="display: none;"></span>
+                <span id="btnText">Translate Text</span>
+                <span class="btn-kbd">↵</span>
+            </button>
+        </div>
+
+        <!-- History Section (Styled exactly like Left Screen in screenshot) -->
+        <section class="history-container" id="historySection">
+            <div class="history-header-row">
+                <h2 class="history-title">History</h2>
+                <button id="clearHistoryBtn" class="see-all-btn" title="Clear all history">Clear all</button>
+            </div>
+            <div id="historyList" class="history-cards-list">
+                <div class="history-empty-item">
+                    <span>No recent translations yet. Enter text above to start!</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Toast Notifications -->
+        <div id="toastContainer" class="toast-hub" aria-live="polite"></div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>CodeAlpha AI Internship — <strong>Task 1: Language Translation Tool</strong></p>
+            <p class="app-footer-sub">
+                <span>Repository: <code>CodeAlpha_LanguageTranslationTool</code></span>
+                <span>•</span>
+                <span>NLP Engine: Google / MyMemory</span>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Client Script -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
